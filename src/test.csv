@@ -1,0 +1,14 @@
+let hello $bool = true;
+while var hello {
+    let a $string = "hello";
+}
+while true {
+    let a $string = "hello";
+}
+let hello $bool = false;
+while var hello {
+    let a $string = "hello";
+}
+while false {
+    let a $string = "hello";
+}

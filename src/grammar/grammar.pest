@@ -1,0 +1,30 @@
+WHITESPACE = _{ " " | "\n" | "\r" }
+char     = { ASCII_ALPHANUMERIC | "." | "_" | "/" }
+name     = @{ char+ }
+value    = @{ char* }
+type     = @{ char* }
+
+// variable
+string = {"\"" ~ ("\"" | char)+ }
+args     = { "var "? ~ "ref"? }
+variable = { "let" ~ name ~ "$" ~ type ~ "=" ~ (args)? ~ (string|value) ~ ";"? }
+reassign = { name ~ "=" ~ (args)? ~ (string|value) ~ ";"? }
+
+// math
+num      = { ( '0'..'9' | "." | "-" )+ }
+arithmetic_type = {  ( "++" | "--" ) }
+arithmetic = { name ~ arithmetic_type ~ num*  ~ ";"? }
+
+// scopes, if statements , for, and while loops
+scope = {"{" ~  (variable | print | reassign | arithmetic | while_loop |if_statement)* ~ "}" }
+bool  = { "var"? ~ value }
+if_statement =  { "if" ~ args ~ value ~ scope }
+while_loop =  { "while" ~ args ~ value ~ scope }
+
+// printing to the console
+print_opt = {"print" | "println" | "printf" | "printfln"}
+print =  { print_opt ~ "("?  ~ string ~ ")" ~ ";"?}
+
+file     = {
+    SOI ~ ((variable | reassign | if_statement  | while_loop| print | arithmetic | "\n" | "\r"))* ~ EOI
+}
