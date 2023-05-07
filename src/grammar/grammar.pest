@@ -16,15 +16,20 @@ arithmetic_type = {  ( "++" | "--" ) }
 arithmetic = { name ~ arithmetic_type ~ num*  ~ ";"? }
 
 // scopes, if statements , for, and while loops
-scope = {"{" ~  (variable | print | reassign | arithmetic | while_loop |if_statement)* ~ "}" }
+scope = {"{" ~  (variable | print | reassign | arithmetic | for_loop | while_loop |if_statement)* ~ "}" }
 bool  = { "var"? ~ value }
 if_statement =  { "if" ~ args ~ value ~ scope }
+// loops
+arrow = { "<-" | "->" }
+usize = {('0'..'9')+}
+range = { usize ~ arrow ~ usize }
 while_loop =  { "while" ~ args ~ value ~ scope }
+for_loop = { "for" ~ name ~ "in" ~ range ~ scope }
 
 // printing to the console
 print_opt = {"print" | "println" | "printf" | "printfln"}
 print =  { print_opt ~ "("?  ~ string ~ ")" ~ ";"?}
 
 file     = {
-    SOI ~ ((variable | reassign | if_statement  | while_loop| print | arithmetic | "\n" | "\r"))* ~ EOI
+    SOI ~ ((variable | reassign | if_statement | for_loop | while_loop| print | arithmetic | "\n" | "\r"))* ~ EOI
 }

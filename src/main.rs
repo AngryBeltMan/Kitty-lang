@@ -12,7 +12,8 @@ use pest_derive::Parser;
 use crate:: types::VarType ;
 
 mod types;
-mod executer;
+mod compiler;
+mod init;
 
 
 const FILE:&'static str = include_str!("test.csv");
@@ -25,6 +26,6 @@ pub type HashMapVar = HashMap<String, Rc<RefCell<VarType>>>;
 fn main() {
     let file = KilnParser::parse(Rule::file, FILE)
         .expect("could not parse").next().expect("never fails");
-    let executer = executer::Executer::new(file.into_inner());
+    let executer = compiler::Compiler::new(file.into_inner());
     executer.execute();
 }

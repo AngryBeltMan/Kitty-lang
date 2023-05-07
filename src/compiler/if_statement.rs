@@ -1,6 +1,6 @@
 use pest::iterators::{Pair,Pairs};
 use crate::HashMapVar;
-use crate::executer::scope::Scope;
+use crate::compiler::scope::Scope;
 use crate::{
     types::VarType,
     Rule
@@ -8,7 +8,7 @@ use crate::{
 pub trait IfStatement {
     fn if_statement(&mut self,line:Pair<Rule>);
 }
-impl <'a>IfStatement for crate::executer::Executer<'a>{
+impl <'a>IfStatement for crate::compiler::Compiler<'a>{
     fn if_statement(&mut self,line:Pair<Rule>) {
         println!("encountered if statement");
         let mut inner_rules = line.into_inner();

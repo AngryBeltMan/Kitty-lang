@@ -1,4 +1,3 @@
-let hello $bool = true;
-while var hello {
-    print("hello world");
+for i in 10 <- 0 {
+    print("hello");
 }
