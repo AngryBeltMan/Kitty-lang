@@ -1,3 +1,4 @@
+#![feature(iter_next_chunk)]
 extern crate pest;
 extern crate pest_derive;
 

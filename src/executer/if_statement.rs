@@ -22,22 +22,23 @@ impl <'a>IfStatement for crate::executer::Executer<'a>{
     }
 }
 pub fn parse_to_bool(line:&mut Pairs<Rule>,variables:&mut HashMapVar) -> bool {
+    parse_to_bool_with_name(line, variables).0
+}
+pub fn parse_to_bool_with_name(line:&mut Pairs<Rule>,variables:&mut HashMapVar) -> (bool,Option<String>) {
     let statement = line.next().unwrap().as_str().trim();
-    println!("statement: {}",statement);
+    // println!("statement: {}",statement);
     if statement == "var" {
-        println!("running var");
+        // println!("running var");
         let name = line.next().unwrap().as_str().trim();
         let opp = variables.get(name).unwrap().borrow();
         if let VarType::Bool(b) = *opp {
-            println!("valid bool");
             drop(opp);
-            return b;
+            return (b,Some(name.to_string()));
         } else {panic!("Non boolean value provided")}
     } else {
         let statement = line.next().unwrap().as_str().trim();
-
         // okay to unwrap because if it panics the user put in a non-bool value
-        return statement.parse::<bool>().unwrap();
+        return (statement.parse::<bool>().unwrap(),None);
     }
 
 }

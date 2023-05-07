@@ -1,7 +1,7 @@
 use pest::iterators::{Pairs, Pair};
 use crate::executer::scope::Scope;
 use std::{
-    cell::RefCell,
+    cell::{RefCell, Ref},
     rc::Rc,
     collections::HashMap
 };
@@ -46,7 +46,39 @@ impl <'a>Executer <'a>{
             Rule::if_statement => { self.if_statement(line); },
             Rule::while_loop => {
                 let mut rules = line.into_inner();
-                while if_statement::parse_to_bool(&mut rules, &mut self.variables) {
+                println!("rules {}",rules);
+                let res = if_statement::parse_to_bool_with_name(&mut rules.clone(), &mut self.variables);
+                if res.0 {
+                    println!("rules {}",rules);
+                    println!("true");
+                    let scope = rules.clone().skip(2)
+                        // okay to unwrap because the parser won't parse if it did return None
+                        .next().unwrap().into_inner();
+                    let name = res.1;
+                    if name.is_none() {
+                        loop {
+                            for rule in scope.clone() {
+                                println!("rule {}",rule.as_str());
+                                self.parse_rule(rule);
+                            }
+                        }
+                    } else {
+                        let name = Rc::clone(self.variables.get(&name.unwrap()).unwrap());
+                        loop {
+                            match *name.borrow() {
+                                 VarType::Bool(b) => {
+                                    if b {
+                                        for rule in scope.clone() {
+                                            println!("rule {}",rule.as_str());
+                                            self.parse_rule(rule);
+                                        }
+                                    } else { break; }
+                                },
+                                _ => panic!("unsupported type")
+                            }
+                        }
+                    }
+
 
                 }
             },
@@ -54,9 +86,11 @@ impl <'a>Executer <'a>{
 
             Rule::print => {
                 let mut rules = line.into_inner();
+                let print_type = rules.next().unwrap().as_str();
                 let string = rules.next().unwrap().as_str();
-                println!("{string}");
-            },
+
+                println!("printed: {string}");
+            }
             Rule::name => {
                 let mut inner_rules = line.into_inner();
                 self.name = inner_rules.next().unwrap().as_str().to_string();
