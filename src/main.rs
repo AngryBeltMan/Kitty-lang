@@ -14,6 +14,7 @@ use crate:: types::VarType ;
 mod types;
 mod compiler;
 mod init;
+mod formatting;
 
 
 const FILE:&'static str = include_str!("test.csv");

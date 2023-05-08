@@ -1,3 +1,5 @@
-for i in 10 <- 0 {
-    print("hello");
+let a $bool = true;
+let c $int = 0;
+while cmp(var a == $bool true) {
+    printfln("%c");
 }

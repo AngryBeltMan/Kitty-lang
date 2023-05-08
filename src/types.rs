@@ -1,5 +1,5 @@
 // #![allow(unused_assignments,unused_variables)]
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,PartialEq)]
 pub enum VarType {
     Int(i32),
     UnInt(u32),
@@ -30,6 +30,11 @@ impl VarType {
     pub fn subtract(&mut self,num:f64) -> Result<(),String> {
         self.add(-num)
     }
+    pub fn get_type(&self) -> &Self { self }
+    /// creates a new vartype based on a type and value
+    /// # let var_type = "int";
+    /// # let var_value = "90";
+    /// # let number = VarType::new(var_type,var_value);
     pub fn new(var_type:&str,value:&str) -> anyhow::Result<Self,> {
         match var_type.to_lowercase().as_str() {
             "int" => { Ok(VarType::Int(value.parse()?)) },
@@ -44,6 +49,32 @@ impl VarType {
             "bool" => { Ok(VarType::Bool(value.parse()?)) },
             "bint" => { Ok(VarType::BigInt(value.parse()?)) },
             _ => panic!("invalid type")
+        }
+    }
+    pub fn get_int(&self) -> Option<f64> {
+        match self {
+            VarType::BigInt(o) => {
+                return Some(*o as f64)
+            },
+            VarType::Int(o) => {
+                return Some(*o as f64);
+            },
+            VarType::Byte(o) => {
+                return Some(*o as f64);
+            },
+            VarType::UnInt(o) => {
+                return Some(*o as f64);
+            },
+            VarType::Float(o) => {
+                return Some(*o as f64);
+            },
+            VarType::BigFloat(o) => {
+                return Some(*o as f64);
+            },
+            VarType::BigUnInt(o) => {
+                return Some(*o as f64);
+            },
+            _ => return None
         }
     }
 }

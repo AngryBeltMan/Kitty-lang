@@ -5,9 +5,9 @@ value    = @{ char* }
 type     = @{ char* }
 
 // variable
-string = {"\"" ~ ("\"" | char)+ }
+string = {"\"" ~ ("\"" | "%" | char)+ }
 args     = { "var "? ~ "ref"? }
-variable = { "let" ~ name ~ "$" ~ type ~ "=" ~ (args)? ~ (string|value) ~ ";"? }
+variable = { "let" ~ name ~ "$" ~ type ~ "=" ~ (args)? ~ (string|cmp|value) ~ ";"? }
 reassign = { name ~ "=" ~ (args)? ~ (string|value) ~ ";"? }
 
 // math
@@ -17,18 +17,22 @@ arithmetic = { name ~ arithmetic_type ~ num*  ~ ";"? }
 
 // scopes, if statements , for, and while loops
 scope = {"{" ~  (variable | print | reassign | arithmetic | for_loop | while_loop |if_statement)* ~ "}" }
-bool  = { "var"? ~ value }
-if_statement =  { "if" ~ args ~ value ~ scope }
+if_statement =  { "if" ~ args ~ (cmp |value) ~ scope }
+// compare opperators
+opp = { "==" | ">=" | "!=" | "<=" | ">" | "<" }
+cmp   = { "cmp" ~ "(" ~ ("$" ~ type | args)  ~ name ~ opp ~ ("$" ~ type | args)  ~ name ~ ")" }
+
+
 // loops
 arrow = { "<-" | "->" }
 usize = {('0'..'9')+}
 range = { usize ~ arrow ~ usize }
-while_loop =  { "while" ~ args ~ value ~ scope }
+while_loop =  { "while" ~ args ~ (cmp |value) ~ scope }
 for_loop = { "for" ~ name ~ "in" ~ range ~ scope }
 
 // printing to the console
-print_opt = {"print" | "println" | "printf" | "printfln"}
-print =  { print_opt ~ "("?  ~ string ~ ")" ~ ";"?}
+print_opt = {"printfln" | "println" | "printf" | "print" }
+print =  { print_opt ~ "("  ~ string ~ ")" ~ ";"?}
 
 file     = {
     SOI ~ ((variable | reassign | if_statement | for_loop | while_loop| print | arithmetic | "\n" | "\r"))* ~ EOI
